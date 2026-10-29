@@ -140,3 +140,13 @@ train_sstar <- train %>%
 
 fit_train <- glm(class ~ ., data = train_sstar, family = 'binomial')
 broom::tidy(fit_train)
+
+
+# Q3a panel (training only): DERM, IgD, TSP4, FSTL1 (4 vs 5 in class)
+#   only DERM, IgD shared with class panel; both still the only significant terms
+#   DERM -0.716 (p = 0.028), IgD -0.645 (p = 0.004), similar to class
+#   AIC 140.8 vs 143 in class: similar fit with one fewer protein
+#   same seed + same 154 rows -> same 123/31 split as the benchmark
+
+
+

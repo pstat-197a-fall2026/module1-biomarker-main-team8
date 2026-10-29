@@ -177,3 +177,60 @@ bind_rows(bench$metrics, q3a) %>%
 # specificity: share of TD children correctly identified (TD cleared / all TD)
 # accuracy:    share of all children classified correctly (correct / all)
 
+
+
+## ===================== Q3b: LARGER k =====================
+# Choose more than 10 top proteins per method (k = 15, 20, 30, 50)
+# Reuses the Q3a split-first setup: train/test, ttests_train, rf_train
+
+
+## STEP 1: PANEL FOR EACH k
+############################
+
+# full rankings from the training data (best first)
+rank_ttest <- ttests_train %>% arrange(p.adj) %>% pull(protein)
+
+rank_rf <- rf_train$importance %>%
+  as_tibble() %>%
+  mutate(protein = rownames(rf_train$importance)) %>%
+  arrange(desc(MeanDecreaseGini)) %>%
+  pull(protein)
+
+# intersection panel for each k
+k_values <- c(10, 15, 20, 30, 50)
+
+q3b_panels <- tibble(k = k_values) %>%
+  mutate(panel      = map(k, ~ intersect(head(rank_ttest, .x), head(rank_rf, .x))),
+         n_proteins = map_int(panel, length))
+
+q3b_panels               # panel size for each k
+q3b_panels$panel[[1]]    # k = 10: should match Q3a (DERM, IgD, TSP4, FSTL1)
+q3b_panels$panel[[2]]    # k = 15
+q3b_panels$panel[[3]]    # k = 20
+q3b_panels$panel[[4]]    # k = 30
+q3b_panels$panel[[5]]    # k = 50
+
+
+# Q3b panels: k = 10/15/20/30/50 -> 4/5/6/12/29 proteins
+#   k = 10 matches Q3a (DERM, IgD, TSP4, FSTL1); panels are nested
+#   slow growth to k = 20, jumps at k = 30 (RELT, MRC2, Cadherin-5 return)
+#   k = 50: 29 proteins on 123 children -> overfitting risk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

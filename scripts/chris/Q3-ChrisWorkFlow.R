@@ -254,7 +254,17 @@ bind_rows(bench$metrics, q3a, q3b) %>%
 #   -> more proteins does not help; small panels around DERM + IgD do best
 
 
+q3b %>%
+  filter(.metric %in% c('accuracy', 'roc_auc')) %>%
+  ggplot(aes(k, .estimate, color = .metric)) +
+  geom_line() + geom_point() +
+  labs(x = 'k (top proteins per method)', y = 'Test estimate')
 
+# Plot: test accuracy and AUROC vs k (top proteins per method)
+#   AUROC flat at 0.871 for k = 10-15, slips at k = 20, drops sharply at k = 30
+#   accuracy peaks at k = 15 (0.839), falls to 0.613 at k = 30
+#   partial recovery at k = 50 is likely single-split noise, not a real gain
+#   -> small panels (k <= 20) do best; large panels overfit
 
 
 

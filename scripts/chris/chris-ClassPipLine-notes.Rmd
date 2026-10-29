@@ -25,3 +25,34 @@ output: html_document
 
 **Note:** these results are likely skewed since panel was chosen using all 154 children and scored on a single small split
 
+**Q3a: Selection on a training partition**
+
+**Setup:** split the data 80/20 first (123 training, 31 test). With the same seed, the test children are the same as in class.
+
+**Training-only selection:** ran the t-tests, random forest and intersection on the training set only.
+
+**Panel:** DERM, IgD, TSP4, FSTL1 (4 proteins), instead of the class panel DERM, RELT, MRC2, IgD, Cadherin-5 (5 proteins).
+
+**Shared proteins:** only DERM and IgD carried over. They were again the only significant predictors.
+
+**Test results vs benchmark:**
+
+Accuracy: 0.774 vs 0.774 (unchanged)
+
+Sensitivity: 0.750 vs 0.812
+
+Specificity: 0.800 vs 0.733
+
+AUROC: 0.871 vs 0.883
+
+[***sensitivity***]{.underline}: share of ASD children correctly identified (ASD caught / all ASD)
+
+[***specificity***]{.underline}: share of TD children correctly identified (TD cleared / all TD)
+
+**Takeaway:** performance rests mainly on DERM and IgD. Selecting on the full dataset only slightly inflated the in-class results.
+
+**Caveat:** this is one 31-child split, where one child is about 3 percentage points of accuracy. Repeating it over many splits would confirm the result.
+
+- **What changed:** Accuracy stayed about the same, but the panel did not. Three of the five in-class proteins were replaced when selection used only the training data, so the selected panel depends on which children are used. Only DERM and IgD were stable.
+- **AUROC:** Dropped slightly (0.883 to 0.871), as expected once test data no longer leaks into selection.
+- **Caveat:** This holds for a single 31-child split. Repeating the comparison over many splits would show whether the gap is consistently this small.

@@ -173,3 +173,7 @@ bind_rows(bench$metrics, q3a) %>%
 #   -> leakage inflated the benchmark only slightly on this split (AUROC -0.012)
 #   caveat: one 31-child split; repeat over many splits to confirm
 
+# sensitivity: share of ASD children correctly identified (ASD caught / all ASD)
+# specificity: share of TD children correctly identified (TD cleared / all TD)
+# accuracy:    share of all children classified correctly (correct / all)
+

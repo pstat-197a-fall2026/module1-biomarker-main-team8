@@ -50,4 +50,10 @@ output: html_document
 - **Takeaway:** performance rests mainly on DERM and IgD. Selecting on the full dataset only slightly inflated the in-class results.
 - **Caveat:** this is one 31 child split, where one child is about 3 percentage points of accuracy. Repeating it over many splits would show whether the gap is consistently this small.
 
-## Q3b: Selection on a training partition
+## Q3b: Larger k (more than 10 proteins per method)
+
+- **Setup:** reused the Q3a split-first setup; took the top k = 10, 15, 20, 30, 50 proteins from each method and intersected them.
+- **Panel size:** 4, 5, 6, 12, 29 proteins. Panels are nested, and RELT, MRC2 and Cadherin-5 return at k = 30.
+- **Results:** small panels (k = 10–20) performed best (accuracy 0.774–0.839, AUROC 0.858–0.871). Large panels did worse (k = 30: accuracy 0.613, AUROC 0.758; k = 50: 0.710, 0.804).
+- **Takeaway:** adding proteins doesn't improve accuracy; beyond about 6 proteins the model overfits the 123 training children. None of the panels beat the benchmark's AUROC (0.883).
+- **Caveat:** single 31-child split; the k = 15 gain (2 children) and the non-smooth k = 30 vs k = 50 pattern may be split noise.

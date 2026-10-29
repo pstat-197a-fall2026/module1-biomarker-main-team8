@@ -247,7 +247,11 @@ bind_rows(bench$metrics, q3a, q3b) %>%
   pivot_wider(names_from = .metric, values_from = .estimate)
 
 
-
+# Q3b results (same 31 test children):
+#   k = 10/15/20: 4-6 proteins, acc 0.774-0.839, AUROC 0.858-0.871 (best range)
+#   k = 15 best accuracy (0.839) but same AUROC as k = 10 -> 2-child gain, not clear win
+#   k = 30/50: 12-29 proteins, acc 0.613-0.710, AUROC 0.758-0.804 (overfitting)
+#   -> more proteins does not help; small panels around DERM + IgD do best
 
 
 

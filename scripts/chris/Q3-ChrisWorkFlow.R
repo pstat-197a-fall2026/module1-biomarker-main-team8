@@ -63,5 +63,30 @@ proteins_s1_train <- ttests_train %>%
   pull(protein)
 
 # compare with the in-class top 10
+
+bench <- readRDS('results/benchmark.rds')
+
+bench$s1      # in-class t-test top 10
+bench$s2      # in-class random forest top 10
+bench$sstar   # in-class panel (intersection)
+bench$metrics # in-class sens, spec, acc, AUROC
+
+
+
 proteins_s1_train
+bench$s1
+intersect(bench$s1, proteins_s1_train)   # kept
+setdiff(bench$s1, proteins_s1_train)     # dropped
+setdiff(proteins_s1_train, bench$s1)     # new
+
 sum(ttests_train$p.adj < 0.05)
+
+# Q3a t-tests (training only) vs in-class top 10:
+#   kept 8/10: DERM, RELT, Calcineurin, C1QR1, MRC2, IgD, PTN, FSTL1
+#   dropped: CXCL16, Cadherin-5 | new: TSP4, RET
+
+
+#   only DERM still has p.adj < 0.05 (less power with 123 children)
+#   -> t-test selection fairly stable, but much weaker significance
+
+

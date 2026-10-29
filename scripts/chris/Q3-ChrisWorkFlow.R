@@ -90,3 +90,29 @@ sum(ttests_train$p.adj < 0.05)
 #   -> t-test selection fairly stable, but much weaker significance
 
 
+
+## STEP 3: RANDOM FOREST (training data only)
+###############################################
+
+predictors_train <- train %>% select(-c(group, ados))
+response_train   <- train %>% pull(group) %>% factor()
+
+set.seed(101422)
+rf_train <- randomForest(x = predictors_train,
+                         y = response_train,
+                         ntree = 1000,
+                         importance = T)
+
+rf_train$confusion   # out-of-bag errors on training children
+
+proteins_s2_train <- rf_train$importance %>%
+  as_tibble() %>%
+  mutate(protein = rownames(rf_train$importance)) %>%
+  slice_max(MeanDecreaseGini, n = 10) %>%
+  pull(protein)
+
+# compare with in-class forest top 10
+proteins_s2_train
+intersect(bench$s2, proteins_s2_train)   # kept
+setdiff(bench$s2, proteins_s2_train)     # dropped
+setdiff(proteins_s2_train, bench$s2)     # new

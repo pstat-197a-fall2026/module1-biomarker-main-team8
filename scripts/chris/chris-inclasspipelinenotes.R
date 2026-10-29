@@ -150,3 +150,30 @@ exp(coef(fit))
 
 # odds ratios with 95% CIs; an interval containing 1 means not significant
 broom::tidy(fit, exponentiate = TRUE, conf.int = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# benchmark row for Q3 comparisons
+benchmark <- testing(biomarker_split) %>%
+  add_predictions(fit, type = 'response') %>%
+  mutate(truth = factor(class, levels = c(FALSE, TRUE)),
+         est   = factor(pred > 0.5, levels = c(FALSE, TRUE))) %>%
+  class_metrics(truth = truth, estimate = est, pred, event_level = 'second') %>%
+  mutate(variant = 'in-class benchmark', n_proteins = length(proteins_sstar))
+
+saveRDS(benchmark, 'results/benchmark.rds')
+
+

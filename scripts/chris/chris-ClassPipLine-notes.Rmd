@@ -49,3 +49,5 @@ output: html_document
 - **AUROC:** dropped slightly (0.883 to 0.871), as expected once test data no longer leaks into selection.
 - **Takeaway:** performance rests mainly on DERM and IgD. Selecting on the full dataset only slightly inflated the in-class results.
 - **Caveat:** this is one 31 child split, where one child is about 3 percentage points of accuracy. Repeating it over many splits would show whether the gap is consistently this small.
+
+## Q3b: Selection on a training partition

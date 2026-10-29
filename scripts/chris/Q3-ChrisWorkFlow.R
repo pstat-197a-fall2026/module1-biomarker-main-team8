@@ -216,6 +216,35 @@ q3b_panels$panel[[5]]    # k = 50
 #   slow growth to k = 20, jumps at k = 30 (RELT, MRC2, Cadherin-5 return)
 #   k = 50: 29 proteins on 123 children -> overfitting risk
 
+## STEP 2: FIT + SCORE EACH PANEL
+###################################
+
+fit_score <- function(panel){
+  train_k <- train %>%
+    select(group, all_of(panel)) %>%
+    mutate(class = (group == 'ASD')) %>%
+    select(-group)
+  
+  fit_k <- glm(class ~ ., data = train_k, family = 'binomial')
+  
+  test %>%
+    mutate(class = (group == 'ASD')) %>%
+    add_predictions(fit_k, type = 'response') %>%
+    mutate(truth = factor(class, levels = c(FALSE, TRUE)),
+           est   = factor(pred > 0.5, levels = c(FALSE, TRUE))) %>%
+    class_metrics(truth = truth, estimate = est, pred, event_level = 'second')
+}
+
+q3b <- q3b_panels %>%
+  mutate(metrics = map(panel, fit_score)) %>%
+  select(k, n_proteins, metrics) %>%
+  unnest(metrics) %>%
+  mutate(variant = paste0('Q3b: k = ', k))
+
+# comparison table
+bind_rows(bench$metrics, q3a, q3b) %>%
+  select(variant, n_proteins, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate)
 
 
 

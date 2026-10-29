@@ -148,5 +148,28 @@ broom::tidy(fit_train)
 #   AIC 140.8 vs 143 in class: similar fit with one fewer protein
 #   same seed + same 154 rows -> same 123/31 split as the benchmark
 
+## STEP 5: EVALUATE ON TEST SET (first use of test data)
+#########################################################
 
+class_metrics <- metric_set(sensitivity, specificity, accuracy, roc_auc)
+
+q3a <- test %>%
+  mutate(class = (group == 'ASD')) %>%
+  add_predictions(fit_train, type = 'response') %>%
+  mutate(truth = factor(class, levels = c(FALSE, TRUE)),
+         est   = factor(pred > 0.5, levels = c(FALSE, TRUE))) %>%
+  class_metrics(truth = truth, estimate = est, pred, event_level = 'second') %>%
+  mutate(variant = 'Q3a: split first', n_proteins = length(proteins_sstar_train))
+
+# compare with benchmark
+bind_rows(bench$metrics, q3a) %>%
+  select(variant, n_proteins, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate)
+
+# Q3a result vs benchmark (same 31 test children):
+#   sens 0.750 vs 0.812 | spec 0.800 vs 0.733 | acc 0.774 vs 0.774 | AUROC 0.871 vs 0.883
+#   panel changed (3 of 5 proteins swapped) but accuracy nearly unchanged:
+#   DERM and IgD drive the model and survive either way
+#   -> leakage inflated the benchmark only slightly on this split (AUROC -0.012)
+#   caveat: one 31-child split; repeat over many splits to confirm
 

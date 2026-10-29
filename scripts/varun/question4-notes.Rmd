@@ -1,0 +1,154 @@
+---
+title: "question4-notes"
+author: "Varun"
+output: html_document
+---
+
+## What this question is asking
+
+Question 4 asks us to do one of two things, compared to the in-class model:
+
+-   find a **simpler** panel (fewer proteins) that works about as well, or
+-   find a **better** panel (any method) that works even more accurately
+
+We tried both, then double-checked everything with a fairer testing method
+at the end. Full working code is in `scripts/varun/question4.R`.
+
+## Metric definitions (in plain words)
+
+-   **Sensitivity:** out of the kids who actually have ASD, how many did
+    we correctly catch?
+-   **Specificity:** out of the kids who don't have ASD, how many did we
+    correctly clear?
+-   **Accuracy:** out of all kids, how many did we get right overall?
+-   **AUROC:** how good the model is at ranking "more likely ASD" above
+    "less likely ASD" (0.5 = random guessing, 1 = perfect)
+
+## Starting point: the in-class benchmark
+
+The in-class model used **5 proteins** (DERM, RELT, MRC2, IgD,
+Cadherin-5), picked by taking the top 10 proteins from a statistical test
+and the top 10 from a random forest, then keeping only the ones that
+showed up on *both* lists.
+
+**Benchmark results:** sensitivity 0.812, specificity 0.733, accuracy
+0.774, AUROC 0.883.
+
+One thing we noticed looking closer at this model: when we checked which
+of the 5 proteins were actually statistically meaningful on their own,
+only **2 of them** were -- DERM and IgD. The other 3 (RELT, MRC2,
+Cadherin-5) weren't pulling real weight. That became our starting idea
+for a simpler panel.
+
+## Try 1: A simpler panel (just DERM + IgD)
+
+**Setup:** same data, same training/test split as the benchmark -- we
+only changed which proteins go into the model, dropping from 5 down to
+just the 2 that mattered.
+
+**Results (same 31 test kids as the benchmark):**
+
+| Metric      | Benchmark (5 proteins) | Simple panel (2 proteins) |
+|-------------|------------------------|----------------------------|
+| Sensitivity | 0.812                  | 0.812                      |
+| Specificity | 0.733                  | 0.733                      |
+| Accuracy    | 0.774                  | 0.774                      |
+| AUROC       | 0.883                  | 0.850                      |
+
+**Interpretation:** three of the four scores are *exactly* the same, and
+the fourth (AUROC) only dropped a little. So cutting the panel from 5
+proteins down to 2 barely changed anything.
+
+**Takeaway:** DERM and IgD alone do almost all the work. The other 3
+proteins weren't adding much.
+
+**Caveat:** this test only used one small group of 31 kids, so small
+differences could just be luck, not a real difference. (We fix this
+further down.)
+
+## Try 2: Let a smarter method pick the panel automatically (LASSO)
+
+**Setup:** instead of picking proteins with a statistical test + random
+forest like the in-class method, we used a method called **LASSO**. It
+looks at *all* 1,317 proteins at once and automatically decides which
+ones matter and which ones to ignore -- no need to pre-filter by hand.
+
+**Results (same 31 test kids):**
+
+| Metric      | Benchmark (5) | LASSO, looser (46 proteins) | LASSO, stricter (17 proteins) |
+|-------------|---------------|------------------------------|--------------------------------|
+| Sensitivity | 0.812         | 0.562                        | 0.625                          |
+| Specificity | 0.733         | 0.933                        | 0.867                          |
+| Accuracy    | 0.774         | 0.742                        | 0.742                          |
+| AUROC       | 0.883         | 0.913                        | 0.908                          |
+
+**Interpretation:** LASSO is better at ranking who's more likely to have
+ASD (higher AUROC) and much better at avoiding false alarms (higher
+specificity) -- but it's noticeably worse at actually catching true ASD
+cases (lower sensitivity), and its accuracy is a bit lower too. It also
+needs way more proteins, so it's not "simpler" either.
+
+**Takeaway:** LASSO is a trade-off, not a clear win. Good at one thing
+(ranking/avoiding false alarms), worse at another (catching real cases).
+
+**Side note:** LASSO independently backs up our earlier finding --
+MRC2 and Cadherin-5 never got picked by LASSO at all, and RELT only
+showed up in the loosest version. A totally different method agrees
+those proteins aren't very useful.
+
+**Caveat:** same as before -- based on one 31-kid test group, so numbers
+could be noisy.
+
+## Making it fair: testing everything properly
+
+**The problem:** every result above came from testing on the *same* 31
+kids, one time. With so few kids, getting even 1 extra kid right or wrong
+changes "accuracy" by about 3 percentage points. So small differences
+between panels might just be random luck, not a real difference.
+
+**The fix:** instead of testing once, we used **repeated cross-validation**
+-- split the 154 kids into 10 groups, test on each group once while
+training on the rest, then repeat that whole process 10 times with
+different groupings. Every kid ends up being tested on about 10 times, so
+the final numbers are an average, not a one-time guess.
+
+**Results (fair, averaged comparison):**
+
+| Panel                      | # proteins | Accuracy | AUROC | Sensitivity | Specificity |
+|-----------------------------|:---:|:---:|:---:|:---:|:---:|
+| **DERM + IgD (simple)**     | **2** | **0.744** | 0.801 | **0.775** | 0.715 |
+| DERM + IgD + RELT           | 3   | 0.735 | **0.814** | 0.747 | 0.728 |
+| Original benchmark          | 5   | 0.730 | 0.791 | 0.741 | 0.724 |
+| Combined list (both methods)| 15  | 0.713 | 0.795 | 0.700 | 0.727 |
+| LASSO (auto-picked)         | ~17-46 | 0.708 | 0.819 | 0.667 | **0.778** |
+
+**Interpretation:**
+
+-   The simple **2-protein panel comes out on top** for accuracy and
+    sensitivity -- not just "as good as" the original, actually a little
+    *better*, once tested fairly.
+-   **More proteins made things worse, not better.** The 15-protein and
+    LASSO versions scored lower on accuracy than the simple 2-protein
+    panel. This is called **overfitting** -- with so few kids to learn
+    from, using too many proteins lets the model latch onto noise instead
+    of real patterns, so it does worse on new kids even though it looks
+    more sophisticated on paper.
+-   LASSO's trade-off (better ranking/specificity, worse at catching real
+    cases) held up even under this fairer test -- so that finding is
+    solid, not just a fluke.
+
+**Takeaway / final answer for Question 4:** the **2-protein DERM + IgD
+panel** is our recommended result. It is simpler than the original
+(2 proteins instead of 5) **and** performs slightly better on accuracy
+and sensitivity once tested fairly -- so it satisfies both goals of this
+question at the same time.
+
+**Caveats (overall limitations):**
+
+-   The whole dataset is only 154 kids, which is small for this kind of
+    model -- even with fair testing, the numbers can shift a bit with
+    different random splits.
+-   None of this tells us *why* DERM and IgD matter biologically --
+    that would need outside medical/scientific knowledge, not just data.
+-   These results describe this one dataset; they may not generalize to
+    a different group of kids without being tested again.

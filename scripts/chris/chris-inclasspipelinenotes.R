@@ -176,4 +176,8 @@ benchmark <- testing(biomarker_split) %>%
 
 saveRDS(benchmark, 'results/benchmark.rds')
 
+saveRDS(list(metrics = benchmark,
+             s1 = proteins_s1, s2 = proteins_s2, sstar = proteins_sstar),
+        'results/benchmark.rds')
+
 

@@ -1,0 +1,27 @@
+---
+title: "chris-ClassPipLine-notes"
+output: html_document
+---
+
+**In-class pipeline wrap-up**
+
+**Goal:** find a small protein panel that separates ASD (76 boys) from TD (78 boys), using 1,317 proteins.
+
+**Preprocessing:** log10, then z-score, then clip at ±3. Each value is how many SDs a child sits from that protein's average.
+
+**t-tests:** the top 10 proteins are all lower in ASD (by 0.75 to 0.89 SD). DERM has the largest gap (−0.885). All 10 stay significant after the Benjamini–Yekutieli correction.
+
+**Random forest:** 31.2% out-of-bag error (35.5% of ASD and 26.9% of TD misclassified). Top proteins include DERM, IgD, MAPK14 and RELT.
+
+**Panel (in both top-10 lists):** DERM, RELT, MRC2, IgD, Cadherin-5.
+
+- **Logistic regression:** fit on 123 children, tested on 31. Only two proteins are significant:
+
+  - **DERM:** OR = e\^−0.751 ≈ 0.47, so +1 SD means about 53% lower odds of ASD (p = 0.020).
+
+  - **IgD:** OR = e\^−0.650 ≈ 0.52, so +1 SD means about 48% lower odds of ASD (p = 0.004).
+
+**Test results:** sensitivity 0.812, specificity 0.733, accuracy 0.774, AUROC 0.883.
+
+**Note:** these results are likely skewed since panel was chosen using all 154 children and scored on a single small split
+

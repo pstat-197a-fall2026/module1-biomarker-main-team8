@@ -116,3 +116,27 @@ proteins_s2_train
 intersect(bench$s2, proteins_s2_train)   # kept
 setdiff(bench$s2, proteins_s2_train)     # dropped
 setdiff(proteins_s2_train, bench$s2)     # new
+
+
+# Q3a forest (training only) vs in-class forest top 10:
+#   OOB error 32.5% (ASD 43.3%, TD 22.2%) vs 31.2% in class
+#   kept 6/10: DERM, IgD, MAPK14, eIF-4H, TSP4, ALCAM
+#   dropped: RELT, MRC2, FSTL3, Cadherin-5 | new: CSK, FSTL1, CK-MB, 14-3-3 zeta/delta
+#   -> forest list less stable than t-test list; 3 of 5 class panel proteins gone
+
+
+
+## STEP 4: PANEL + LOGISTIC REGRESSION (training data only)
+############################################################
+
+proteins_sstar_train <- intersect(proteins_s1_train, proteins_s2_train)
+proteins_sstar_train
+intersect(bench$sstar, proteins_sstar_train)   # kept from class panel
+
+train_sstar <- train %>%
+  select(group, any_of(proteins_sstar_train)) %>%
+  mutate(class = (group == 'ASD')) %>%
+  select(-group)
+
+fit_train <- glm(class ~ ., data = train_sstar, family = 'binomial')
+broom::tidy(fit_train)

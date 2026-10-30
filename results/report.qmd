@@ -1,7 +1,7 @@
 ---
 title: "Biomarkers of ASD"
 subtitle: "If you want a subtitle put it here"
-author: "List names here"
+author: "Joyce Shu, Chris Zaragoza, Katrina Topchiyan, Varun Sardana, Makala Mesina-Forester"
 date: last-modified
 published-title: "Updated"
 editor: visual
@@ -19,6 +19,12 @@ Use this as a template. Keep the headers and remove all other text. In all, your
 ```{r}
 # load any other packages and read data here
 library(tidyverse)
+library(infer)
+library(randomForest)
+library(tidymodels)
+library(modelr)
+library(yardstick)
+library(glmnet)
 ```
 
 ## Abstract

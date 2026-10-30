@@ -266,10 +266,53 @@ q3b %>%
 #   partial recovery at k = 50 is likely single-split noise, not a real gain
 #   -> small panels (k <= 20) do best; large panels overfit
 
+## ===================== Q3c: FUZZY INTERSECTION =====================
+# Combine top proteins across methods with a looser rule than intersect()
+# Reuses Q3a/Q3b objects: rank_ttest, rank_rf, fit_score, train/test
+
+## FUZZY PANELS
+#################################
+# Rule A: in the top k of one list AND the top 2k of the other
+
+fuzzy_panel <- function(k){
+  union(intersect(head(rank_ttest, k),     head(rank_rf, 2 * k)),
+        intersect(head(rank_ttest, 2 * k), head(rank_rf, k)))
+}
+
+q3c_panels <- tibble(k = c(10, 15, 20)) %>%
+  mutate(panel      = map(k, fuzzy_panel),
+         n_proteins = map_int(panel, length),
+         hard_n     = map_int(k, ~ length(intersect(head(rank_ttest, .x),
+                                                    head(rank_rf, .x)))))
+
+q3c_panels                       # fuzzy vs hard panel size for each k
+q3c_panels$panel[[1]]            # k = 10 fuzzy panel
+setdiff(q3c_panels$panel[[1]], proteins_sstar_train)   # added vs hard (Q3a)
 
 
+# Q3c panels (Rule A): k = 10/15/20 -> 5/9/16 proteins (hard: 4/5/6)
+#   fuzzy k = 10 adds PTN = same panel as Q3b hard k = 15
+#   fuzzy panels grow ~2-3x faster than hard; k = 20 (16 proteins) risks overfitting
 
 
+## STEP 2: FIT + SCORE EACH FUZZY PANEL
+########################################
+
+q3c <- q3c_panels %>%
+  mutate(metrics = map(panel, fit_score)) %>%
+  select(k, n_proteins, metrics) %>%
+  unnest(metrics) %>%
+  mutate(variant = paste0('Q3c: fuzzy k = ', k))
+
+# comparison table
+bind_rows(bench$metrics, q3a, q3b, q3c) %>%
+  select(variant, n_proteins, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate)
+
+# Q3c results (Rule A: top k of one list AND top 2k of the other):
+#   fuzzy k = 10 (5 proteins, + PTN): acc 0.839, AUROC 0.871 = same as Q3b hard k = 15
+#   fuzzy k = 15/20 (9/16 proteins): acc 0.613, AUROC 0.788/0.783, sens 0.50/0.44
+#    fuzzy helps only when it adds 1 protein; larger fuzzy panels overfit
 
 
 

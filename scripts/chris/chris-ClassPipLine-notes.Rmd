@@ -57,3 +57,21 @@ output: html_document
 - **Results:** small panels (k = 10–20) performed best (accuracy 0.774–0.839, AUROC 0.858–0.871). Large panels did worse (k = 30: accuracy 0.613, AUROC 0.758; k = 50: 0.710, 0.804).
 - **Takeaway:** adding proteins doesn't improve accuracy; beyond about 6 proteins the model overfits the 123 training children. None of the panels beat the benchmark's AUROC (0.883).
 - **Caveat:** single 31-child split; the k = 15 gain (2 children) and the non-smooth k = 30 vs k = 50 pattern may be split noise.
+
+## Q3c: Fuzzy intersection
+
+- **Rule:** keep a protein if it ranks high in one method and fairly high in the other (top k in one list, top 2k in the other).
+
+- **Panel size:** 5, 9 and 16 proteins for k = 10, 15 and 20 (the hard intersection gave 4, 5 and 6).
+
+- **Results:** at k = 10, adding one protein (PTN) gave the best accuracy (0.839). At k = 15 and 20, the bigger panels did worse (accuracy 0.613).
+
+- **Takeaway:** the fuzzy rule helps only when it adds one or two strong proteins. Bigger panels overfit.
+
+- **Caveat:** based on one test set of 31 children, so the best result is only 2 more children correct.
+
+## Q3 overall
+
+- **Split first (Q3a):** accuracy stayed the same and AUROC dropped slightly. Some proteins changed, but DERM and IgD stayed.
+- **More proteins (Q3b, Q3c):** small panels of 4–6 proteins worked best. Bigger panels did worse.
+- **Main finding:** a few key proteins (mainly DERM and IgD) drive the results. No version beat the original AUROC of 0.883.

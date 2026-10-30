@@ -1,0 +1,28 @@
+---
+title: "Q1"
+author: "Joyce Shu"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+From the plots that were made in question1.R, we can see there is a clear right skewness to the four proteins that were chosen. 
+
+The E3 Ubiquitin protein plot shows most observations are concentrated between 0-5,000 followed by a gap and then a small amount of observations between 30,000-35,000. 
+
+The CCAAT Enhancer Binding protein plot shows observations are concentrated between 500-3,000 with a peak between 1,000-1,500. Following a similar trend as the E3 Ubiquitin protein plot, there is a gap then a small amount of observations between 6,000-6,500.
+
+The Gamma Enolase plot shows observations forming an obvious right skew from 500-3,000. The highest peak occurs between the 500-1,000 marks with observations trailing off and becoming tiny as the plot skews towards 3,000.
+
+The E3 SUMO protein plot shows two large bar peaks between 500-1,500 with small observations concentrating between 1,500-2,000,  2,500-3,000, 3,500-4,000, and 6,500-7,000. 
+
+By log-transforming the protein levels, we can compress the larger values in our data, reducing a right-skewed plot and lowering the influence of larger observations. This will help make a more symmetrical curve and help data analysis.
+
+
+
+
+
+
+

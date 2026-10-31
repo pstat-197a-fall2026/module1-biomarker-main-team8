@@ -29,7 +29,7 @@ library(glmnet)
 
 ## Abstract
 
-Write a brief one-paragraph abstract that describes the contents of your write-up.
+This report examines the use of blood protein biomarkers to predict autism spectrum disorder (ASD), based on the findings of Hewitson et al. (2021). We first summarize the study's methodology and findings. We then replicate and evaluate an in-class predictive model using t-tests, random forest, and logistic regression. To explore potential improvements, we tried other feature selection methods, including fuzzy intersection and LASSO regression. We compared the sensitivity, specificity, and AUROC of the models. Our results suggest that a simpler two-protein with DERM and IgD as predictors can achieve comparable or slightly better predictive performance than more complex models.
 
 ## Dataset
 

@@ -47,6 +47,21 @@ Hewitson et al. (2021) investigated whether blood protein levels could be used a
 
 The top predictive proteins were selected from each method. There were 5 proteins in-common between each method that were selected as 'core' proteins (DERM, MAPK14, IgD, EPHB2, and suPAR). Using logistic regression, additional proteins were added to increase the model's predictive capability. Ultimately, the researchers identified nine proteins (core proteins, ROR1, GI24, elF-4H, and ARSB). They evaluated the model's performance using ROC curve (AUC), sensitivity, and specificity. They also examined correlations between the selected proteins and participant ADOS scores; The resulting protein panel achieved an AUC of approximately 0.86 (sensitivity 83%; specificity 84%), suggesting that blood protein levels may be useful for identifying ASD, although the reseatchers emphasized the need for more validation using larger, independent datasets.
 
+```{mermaid}
+flowchart TD
+    A(154 Participants) --> B(Two Groups (ASD/TD))
+    B --> C(Test 1,125 Proteins)
+    C --> D(Normalize Data by Log/Z Transforming)
+    D --> E(Protein Selection)
+    E --> F[Random Forest]
+    E --> G[T-Test]
+    E --> H[Correlation]
+    F --> I(Protein Selection)
+    G --> I(Protein Selection)
+    H --> I(Protein Selection)
+    I --> J(Evaluate Model)
+```
+
 ## Findings
 
 Summarize your findings here. I've included some subheaders in a way that seems natural to me; you can structure this section however you like.

@@ -33,15 +33,11 @@ This report examines the use of blood protein biomarkers to predict autism spect
 
 ## Dataset
 
-Write a brief data description, including: how data were obtained; sample characteristics; variables measured; and data preprocessing. This can be largely based on the source paper and should not exceed 1-2 paragraphs.
-
 In this module, we used two datasets: `biomarker-raw.csv`, the raw data, and `biomarker-clean.csv`, the processed data. The data is publicly available and was obtained from Hewitson *et al.* (2021). *Blood biomarker discovery for autism spectrum disorder: A proteomic analysis.* The raw dataset contains 156 observations and their levels of 1,317 proteins. All participants were boys aged 18 months to 8 years. The dataset also indicates if each participant is diagnosed with ASD (ASD) or is not diagnosed with ASD (TD). In our data, 76 participants are diagnosed with ASD and 78 are not.
 
 The cleaned dataset also has observations from 154 participants. Each observation includes protein measurements for the proteins, although these values have been standardized. Unlike the raw data, protein values in the cleaned dataset can be negative or positive. Along with participant groups (ASD/TD), the cleaned dataset includes participants' ADOS number if they are a part of the ASD group. ADOS (Autism Diagnostic Observation Schedule) is a clinical assessment used to evaluate ASD severity. In this sample, ADOS is scored between 6 and 23, with higher values indicating more sever ASD. Additionally, the cleaned dataset has shortened names for each protein and the `Group` column has been renamed to `group`.
 
 ## Summary of published analysis
-
-Summarize the methodology of the paper in 1-3 paragraphs. You need not explain the methods in depth as we did in class; just indicate what methods were used and how they were combined. If possible, include a diagram that depicts the methodological design. (Quarto has support for [GraphViz and Mermaid flowcharts](https://quarto.org/docs/authoring/diagrams.html).) Provide key results: the proteins selected for the classifier and the estimated accuracy.
 
 Hewitson et al. (2021) investigated whether blood protein levels could be used as biomarkers to identify autism spectrum disorder (ASD). The researchers collected blood samples from 154 male pediatric subjects from the ages of 18 months to 8 years. 76 participants were diagnosed with ASD and 78 were not. The participants with ASD were assessed using ADOS (Autism Diagnostic Observation Schedule), which evaluates ASD severity. A total of 1,317 proteins were initially measured. The SOMAScan platform was used for analysis. 192 proteins failed quality control and were subsequently removed from the analysis for a total of 1,125 proteins. The protein abundance data was normalized using a log10 transformation as well as a z-transformation. Any z-transformed values that fell outside the \[-3, 3\] range were cut in order to control for outliers. To select the proteins that would be used for model, they used random-forest, t-test, and correlation methods.
 
@@ -64,11 +60,7 @@ flowchart TD
 
 ## Findings
 
-Summarize your findings here. I've included some subheaders in a way that seems natural to me; you can structure this section however you like.
-
 ### Impact of preprocessing and outliers
-
-Tasks 1-2
 
 In Task 1, we cleaned the raw dataset by removing the first row of protein abbreviations and changing the protein values to numeric types. We then plotted the protein levels of four proteins (CHIP, CEBPB, NSE, and PIAS4). From the four histograms, we can observe that there is right-skewness in all four proteins. The E3 Ubiquitin protein (CHIP) plot peaks between 0-5,000 followed by a gap, and then a few observations between 30,000-35,000. The CCAAT Enhancer Binding protein (CEBPB) plot shows observations are concentrated between 500-3,000 with a peak between 1,000-1,500. There is also a gap followed by a few observations between 6,000-6,500. The Gamma Enolase (NSE) plot shows observations forming a right skew from 500-3,000. The peak occurs between the 500-1,000. The E3 SUMO protein (PIAS4) plot peaks between 500-1,500 with small observations concentrating between 1,500-2,000, 2,500-3,000, 3,500-4,000, and 6,500-7,000. By log-transforming the protein levels, we can compress the larger values in our data, reducing the right-skewness and lowering the influence of larger observations. This helps with data analysis, as well as making a more symmetrical curve.
 
